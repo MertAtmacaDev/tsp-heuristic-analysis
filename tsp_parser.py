@@ -1,29 +1,29 @@
 import numpy
 
-coords = []
-flag = True
-with  open("eil51.tsp") as file:
-    for row in file:
-        if row.startswith("EOF"):
-            break
+def parse_tsp(filename):
+    coords = []
+    reading_header = True
+    with open(filename) as file:
+        for row in file:
+            if row.startswith("EOF"):
+                break
 
-        print(row.strip())
+            if row.startswith("NODE_COORD_SECTION"):
+                reading_header = False
+                continue
+            
+            if reading_header == True:
+                if row.startswith("DIMENSION"):
+                    pieces = row.split(":")
+                    dimension = int(pieces[1].strip())
 
-        if row.startswith("NODE_COORD_SECTION"):
-            flag = False
-            continue
-        
-        if flag == True:
-            if row.startswith("DIMENSION"):
-                pieces = row.split(":")
-                dimension = int(pieces[1].strip())
-
-            if row.startswith("EDGE_WEIGHT_TYPE"):
-                pieces = row.split(":")
-                edge_weight_type = pieces[1].strip()
-        else:
-            pieces = row.split()
-            coords.append((int(pieces[1]), int(pieces[2])))
+                if row.startswith("EDGE_WEIGHT_TYPE"):
+                    pieces = row.split(":")
+                    edge_weight_type = pieces[1].strip()
+            else:
+                pieces = row.split()
+                coords.append((int(pieces[1]), int(pieces[2])))
+    return coords
             
         
 def distance_calc(coords):
@@ -40,4 +40,8 @@ def distance_calc(coords):
 
     return distance
 
-print(distance_calc(coords)[0][1])
+
+
+if __name__ == "__main__":
+    coords = parse_tsp("eil51.tsp")
+    print(distance_calc(coords)[0][1])
