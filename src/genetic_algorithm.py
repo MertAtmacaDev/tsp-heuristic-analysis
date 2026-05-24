@@ -30,9 +30,6 @@ def create_population(pop_size, num_cities, distance):
 
     return population
 
-def fitness(route, distance):
-    return 1 / total_distance(route, distance)
-
 def tournament_selection(population, distance, tournament_size=5):
     tournament = random.sample(population, tournament_size)
     tournament.sort(key=lambda route: total_distance(route, distance))

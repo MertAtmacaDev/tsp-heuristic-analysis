@@ -14,7 +14,7 @@
 
 \title{A Comparative Performance Analysis of Heuristic Algorithms for the Travelling Salesman Problem}
 
-\author{\IEEEauthorblockN{Mert}
+\author{\IEEEauthorblockN{Mert Atmaca}
 \IEEEauthorblockA{\textit{Dept. of Software Engineering} \\
 \textit{Manisa Celal Bayar University}\\
 Manisa, Turkey}
@@ -118,7 +118,7 @@ We evaluate three hybrid approaches where 2-Opt is applied as a post-processing 
 Experiments were conducted on the eil51 instance from TSPLIB \cite{reinelt1991}, which consists of 51 cities with 2D Euclidean coordinates. The known optimal tour distance is 426. Distances are computed using the EUC\_2D metric with nearest-integer rounding, consistent with the TSPLIB standard.
 
 \subsection{Experimental Setup}
-All algorithms were implemented in Python and executed on the same machine. Since SA and GA are stochastic algorithms, each was run 10 times independently. We report the best, average, and worst tour distances, the standard deviation, and the average execution time. For hybrid methods, the reported execution time includes the time for the base algorithm. The optimality gap is calculated as:
+All algorithms were implemented in Python and executed on the same machine. Since SA and GA are stochastic algorithms, each was run 10 times independently. Note that hybrid variants (e.g., SA+2-Opt) are run independently from their base algorithms; each run starts with a different random seed, so the worst-case results are not directly comparable across rows. We report the best, average, and worst tour distances, the standard deviation, and the average execution time. For hybrid methods, the reported execution time includes the time for the base algorithm. The optimality gap is calculated as:
 
 \begin{equation}
 \text{Gap} = \frac{\text{Average Distance} - \text{Optimal}}{\text{Optimal}} \times 100\%
