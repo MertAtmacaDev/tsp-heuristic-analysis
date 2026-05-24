@@ -3,7 +3,7 @@ import random
 
 def nearest_neighbor(distance, start_city):
     sorted_city = [start_city]
-    visited = {start_city}
+    visited = {start_city} #using a set instead of list for o(1) lookups instead of o(n)
     total_distance = 0
 
     for i in range(len(distance)-1):
