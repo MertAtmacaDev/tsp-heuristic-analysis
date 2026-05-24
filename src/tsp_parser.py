@@ -35,6 +35,8 @@ def distance_calc(coords):
             x1, y1 = coords[i]
             x2, y2 = coords[j]
             euclid_calc = numpy.sqrt((x2 - x1)**2 + (y2-y1)**2)
+            # TSPLIB EUC_2D standard: round to nearest integer (nint)
+            euclid_calc = round(euclid_calc)
             distance[i][j] = euclid_calc
             distance[j][i] = euclid_calc
 

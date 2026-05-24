@@ -23,7 +23,7 @@ Manisa, Turkey}
 \maketitle
 
 \begin{abstract}
-The Travelling Salesman Problem (TSP) is one of the most well-known NP-hard combinatorial optimization problems. Finding an optimal solution becomes computationally infeasible as the problem size grows. In this study, we implement and compare the performance of four heuristic approaches: Nearest Neighbor (NN), Simulated Annealing (SA), Genetic Algorithm (GA), and 2-Opt local search. We also evaluate hybrid combinations such as NN+2-Opt, SA+2-Opt, and GA+2-Opt. Experiments are conducted on the eil51 benchmark instance from the TSPLIB library, which consists of 51 cities. Each stochastic algorithm is executed 10 times to obtain statistically reliable results. Our findings show that GA+2-Opt achieves the best average solution quality with a 4.2\% gap from the known optimum, while NN+2-Opt provides the best trade-off between computation time and solution quality. The results demonstrate that combining metaheuristic algorithms with local search methods significantly improves solution quality.
+The Travelling Salesman Problem (TSP) is one of the most well-known NP-hard combinatorial optimization problems. Finding an optimal solution becomes computationally infeasible as the problem size grows. In this study, we implement and compare the performance of four heuristic approaches: Nearest Neighbor (NN), Simulated Annealing (SA), Genetic Algorithm (GA), and 2-Opt local search. We also evaluate hybrid combinations such as NN+2-Opt, SA+2-Opt, and GA+2-Opt. Experiments are conducted on the eil51 benchmark instance from the TSPLIB library, which consists of 51 cities. Each stochastic algorithm is executed 10 times to obtain statistically reliable results. Our findings show that NN+2-Opt achieves the best average solution quality with a 2.6\% gap from the known optimum, while GA+2-Opt provides the best results among stochastic methods with a 3.6\% gap and the lowest standard deviation. The results demonstrate that combining metaheuristic algorithms with local search methods significantly improves solution quality.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -65,8 +65,10 @@ Recent studies have shown that hybrid approaches, which combine different heuris
 Given a set of $n$ cities with coordinates $(x_i, y_i)$ for $i = 1, 2, \ldots, n$, the Euclidean distance between cities $i$ and $j$ is calculated as:
 
 \begin{equation}
-d_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2}
+d_{ij} = \text{nint}\left(\sqrt{(x_i - x_j)^2 + (y_i - y_j)^2}\right)
 \end{equation}
+
+where $\text{nint}(\cdot)$ denotes rounding to the nearest integer, as specified by the TSPLIB EUC\_2D standard \cite{reinelt1991}.
 
 The objective is to find a permutation $\pi$ of cities that minimizes the total tour distance:
 
@@ -113,10 +115,10 @@ We evaluate three hybrid approaches where 2-Opt is applied as a post-processing 
 \section{Experimental Results}
 
 \subsection{Dataset}
-Experiments were conducted on the eil51 instance from TSPLIB \cite{reinelt1991}, which consists of 51 cities with 2D Euclidean coordinates. The known optimal tour distance is 426.
+Experiments were conducted on the eil51 instance from TSPLIB \cite{reinelt1991}, which consists of 51 cities with 2D Euclidean coordinates. The known optimal tour distance is 426. Distances are computed using the EUC\_2D metric with nearest-integer rounding, consistent with the TSPLIB standard.
 
 \subsection{Experimental Setup}
-All algorithms were implemented in Python and executed on the same machine. Since SA and GA are stochastic algorithms, each was run 10 times independently. We report the best, average, and worst tour distances, the standard deviation, and the average execution time. The optimality gap is calculated as:
+All algorithms were implemented in Python and executed on the same machine. Since SA and GA are stochastic algorithms, each was run 10 times independently. We report the best, average, and worst tour distances, the standard deviation, and the average execution time. For hybrid methods, the reported execution time includes the time for the base algorithm. The optimality gap is calculated as:
 
 \begin{equation}
 \text{Gap} = \frac{\text{Average Distance} - \text{Optimal}}{\text{Optimal}} \times 100\%
@@ -133,18 +135,18 @@ Table~\ref{tab:results} presents the performance comparison of all algorithms.
 \toprule
 \textbf{Algorithm} & \textbf{Best} & \textbf{Avg} & \textbf{Worst} & \textbf{Std} & \textbf{Gap\%} \\
 \midrule
-NN          & 505.77 & 505.77 & 505.77 & 0.00  & 18.7\% \\
-NN + 2-Opt  & 450.04 & 450.04 & 450.04 & 0.00  & 5.6\%  \\
-SA          & 440.45 & 455.28 & 469.53 & 9.40  & 6.9\%  \\
-SA + 2-Opt  & 438.16 & 450.42 & 472.69 & 11.53 & 5.7\%  \\
-GA          & 462.44 & 472.43 & 485.95 & 8.20  & 10.9\% \\
-GA + 2-Opt  & 438.85 & 443.92 & 448.65 & 3.19  & 4.2\%  \\
+NN          & 482.00 & 482.00 & 482.00 & 0.00  & 13.1\% \\
+NN + 2-Opt  & 437.00 & 437.00 & 437.00 & 0.00  & 2.6\%  \\
+SA          & 439.00 & 447.90 & 456.00 & 5.41  & 5.1\%  \\
+SA + 2-Opt  & 433.00 & 446.90 & 462.00 & 7.93  & 4.9\%  \\
+GA          & 459.00 & 465.00 & 467.00 & 2.79  & 9.2\%  \\
+GA + 2-Opt  & 433.00 & 441.40 & 443.00 & 3.04  & 3.6\%  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Distance Comparison}
-Fig.~\ref{fig:distance} shows the average tour distances with error bars representing the standard deviation. The red dashed line indicates the known optimal solution of 426. GA+2-Opt achieves the lowest average distance (443.92), followed by NN+2-Opt (450.04) and SA+2-Opt (450.42).
+Fig.~\ref{fig:distance} shows the average tour distances with error bars representing the standard deviation. The red dashed line indicates the known optimal solution of 426. NN+2-Opt achieves the lowest average distance (437.00), followed by GA+2-Opt (441.40) and SA+2-Opt (446.90).
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{figures/distance_comparison.pdf}}
@@ -153,7 +155,7 @@ Fig.~\ref{fig:distance} shows the average tour distances with error bars represe
 \end{figure}
 
 \subsection{Optimality Gap}
-Fig.~\ref{fig:gap} illustrates the percentage gap from the optimal solution. Nearest Neighbor alone has the highest gap at 18.7\%, while GA+2-Opt achieves the smallest gap at 4.2\%.
+Fig.~\ref{fig:gap} illustrates the percentage gap from the optimal solution. Nearest Neighbor alone has the highest gap at 13.1\%, while NN+2-Opt achieves the smallest gap at 2.6\%, followed by GA+2-Opt at 3.6\%.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{figures/gap_comparison.pdf}}
@@ -162,7 +164,7 @@ Fig.~\ref{fig:gap} illustrates the percentage gap from the optimal solution. Nea
 \end{figure}
 
 \subsection{Execution Time}
-Fig.~\ref{fig:time} compares the average execution times. NN and NN+2-Opt are the fastest algorithms, completing in under 0.02 seconds. GA-based methods are significantly slower due to the population-based search.
+Fig.~\ref{fig:time} compares the average execution times. NN and NN+2-Opt are the fastest algorithms, completing in under 0.03 seconds. GA-based methods are significantly slower due to the population-based search.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{figures/time_comparison.pdf}}
@@ -171,7 +173,7 @@ Fig.~\ref{fig:time} compares the average execution times. NN and NN+2-Opt are th
 \end{figure}
 
 \subsection{Solution Quality Distribution}
-Fig.~\ref{fig:baw} presents the best, average, and worst tour distances for each algorithm. Deterministic methods (NN, NN+2-Opt) show no variance, while stochastic methods exhibit varying degrees of spread. GA+2-Opt shows the smallest spread among stochastic methods.
+Fig.~\ref{fig:baw} presents the best, average, and worst tour distances for each algorithm. Deterministic methods (NN, NN+2-Opt) show no variance, while stochastic methods exhibit varying degrees of spread. GA+2-Opt shows the smallest spread among stochastic methods with a standard deviation of only 3.04.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{figures/best_avg_worst.pdf}}
@@ -194,11 +196,11 @@ Fig.~\ref{fig:routes} visualizes the tours produced by each algorithm. The NN to
 In this study, we implemented and compared four heuristic algorithms and their hybrid combinations for solving the Travelling Salesman Problem on the eil51 benchmark instance. Our key findings are:
 
 \begin{enumerate}
-    \item \textbf{2-Opt is a powerful improvement method.} Applying 2-Opt as a post-processing step consistently improves solution quality. The most dramatic improvement is observed with GA, where the gap drops from 10.9\% to 4.2\%.
-    \item \textbf{GA+2-Opt achieves the best solution quality} with an average gap of only 4.2\% from the optimum and the lowest standard deviation (3.19) among stochastic methods, indicating consistent performance.
-    \item \textbf{NN+2-Opt offers the best time-quality trade-off.} It achieves a 5.6\% gap in under 0.004 seconds, making it suitable for real-time applications where speed is critical.
-    \item \textbf{Standalone GA performs relatively poorly} (10.9\% gap), suggesting that the crossover and mutation operators alone are insufficient without local refinement.
-    \item \textbf{SA provides competitive results} with a 6.9\% gap, and SA+2-Opt further reduces it to 5.7\%, demonstrating that local search can enhance metaheuristic solutions.
+    \item \textbf{2-Opt is a powerful improvement method.} Applying 2-Opt as a post-processing step consistently improves solution quality. The most dramatic improvement is observed with NN, where the gap drops from 13.1\% to 2.6\%, and with GA, where it drops from 9.2\% to 3.6\%.
+    \item \textbf{NN+2-Opt achieves the best average solution quality} with a gap of only 2.6\% from the optimum in under 0.03 seconds, making it an excellent choice for applications where both speed and quality are important.
+    \item \textbf{GA+2-Opt provides the best stochastic results} with an average gap of 3.6\% and a low standard deviation (3.04), indicating consistent performance across runs.
+    \item \textbf{Standalone GA performs relatively poorly} (9.2\% gap), suggesting that the crossover and mutation operators alone are insufficient without local refinement.
+    \item \textbf{SA provides competitive results} with a 5.1\% gap, and SA+2-Opt slightly improves it to 4.9\%, demonstrating that local search can enhance metaheuristic solutions.
 \end{enumerate}
 
 Future work could explore larger TSPLIB instances, additional metaheuristics such as Ant Colony Optimization, adaptive parameter tuning, and more advanced local search methods like 3-opt or Lin-Kernighan.

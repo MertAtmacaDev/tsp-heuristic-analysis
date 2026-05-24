@@ -46,6 +46,7 @@ def run_experiments(tsp_file, num_runs=10):
     start_time = time.time()
     opt_cost, opt_route = two_opt.two_opt(best_nn_route, distance)
     opt_time = time.time() - start_time
+    total_nn_opt_time = nn_time + opt_time  # include NN time in total
 
     results.append({
         "algorithm": "NN + 2-Opt",
@@ -53,9 +54,9 @@ def run_experiments(tsp_file, num_runs=10):
         "worst": round(opt_cost, 2),
         "average": round(opt_cost, 2),
         "std": 0.0,
-        "avg_time": round(opt_time, 4)
+        "avg_time": round(total_nn_opt_time, 4)
     })
-    print(f"  Result: {opt_cost:.2f}  ({opt_time:.4f}s)")
+    print(f"  Result: {opt_cost:.2f}  ({total_nn_opt_time:.4f}s)")
 
     print(f"Running Simulated Annealing ({num_runs} runs)...")
     sa_costs = []
