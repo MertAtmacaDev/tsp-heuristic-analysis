@@ -1,0 +1,209 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{algorithm}
+
+\begin{document}
+
+\title{A Comparative Performance Analysis of Heuristic Algorithms for the Travelling Salesman Problem}
+
+\author{\IEEEauthorblockN{Mert}
+\IEEEauthorblockA{\textit{Dept. of Software Engineering} \\
+\textit{Manisa Celal Bayar University}\\
+Manisa, Turkey}
+}
+
+\maketitle
+
+\begin{abstract}
+The Travelling Salesman Problem (TSP) is one of the most well-known NP-hard combinatorial optimization problems. Finding an optimal solution becomes computationally infeasible as the problem size grows. In this study, we implement and compare the performance of four heuristic approaches: Nearest Neighbor (NN), Simulated Annealing (SA), Genetic Algorithm (GA), and 2-Opt local search. We also evaluate hybrid combinations such as NN+2-Opt, SA+2-Opt, and GA+2-Opt. Experiments are conducted on the eil51 benchmark instance from the TSPLIB library, which consists of 51 cities. Each stochastic algorithm is executed 10 times to obtain statistically reliable results. Our findings show that GA+2-Opt achieves the best average solution quality with a 4.2\% gap from the known optimum, while NN+2-Opt provides the best trade-off between computation time and solution quality. The results demonstrate that combining metaheuristic algorithms with local search methods significantly improves solution quality.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Travelling Salesman Problem, Nearest Neighbor, Simulated Annealing, Genetic Algorithm, 2-Opt, Heuristic Optimization
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+The Travelling Salesman Problem (TSP) asks the following question: given a set of cities and the distances between each pair, what is the shortest possible route that visits every city exactly once and returns to the starting city? Despite its simple formulation, TSP is classified as an NP-hard problem, meaning that no known polynomial-time algorithm can solve it optimally for all instances \cite{garey1979}.
+
+TSP has significant practical applications in logistics, circuit board drilling, DNA sequencing, and vehicle routing \cite{applegate2006}. As the number of cities increases, exact methods such as branch and bound become computationally intractable. For a problem with $n$ cities, the number of possible routes is $(n-1)!/2$, which grows factorially.
+
+To address this challenge, researchers have developed various heuristic and metaheuristic methods that can find near-optimal solutions in reasonable time. In this study, we implement and compare four such approaches:
+
+\begin{itemize}
+    \item \textbf{Nearest Neighbor (NN):} A simple constructive heuristic that builds a tour by always visiting the closest unvisited city.
+    \item \textbf{Simulated Annealing (SA):} A metaheuristic inspired by the annealing process in metallurgy, which allows occasional uphill moves to escape local optima.
+    \item \textbf{Genetic Algorithm (GA):} An evolutionary approach that maintains a population of solutions and improves them through selection, crossover, and mutation operations.
+    \item \textbf{2-Opt:} A local search improvement method that iteratively removes crossing edges from a tour.
+\end{itemize}
+
+We also evaluate hybrid combinations where 2-Opt is applied as a post-processing step to the solutions produced by NN, SA, and GA. The experiments are conducted on the eil51 benchmark instance from TSPLIB \cite{reinelt1991}, which has a known optimal solution of 426.
+
+\section{Literature Review}
+
+The TSP has been extensively studied since its formulation in the 1930s. Flood \cite{flood1956} was among the first to formally describe the problem and propose heuristic approaches. The nearest neighbor heuristic, one of the simplest approaches, was analyzed by Rosenkrantz et al. \cite{rosenkrantz1977}, who showed that it produces tours within a factor of $O(\log n)$ of the optimal.
+
+Lin and Kernighan \cite{lin1973} introduced the concept of $k$-opt moves, where 2-opt and 3-opt local search methods iteratively improve a tour by replacing edges. The 2-opt method, despite its simplicity, remains one of the most widely used improvement heuristics due to its effectiveness and ease of implementation.
+
+Kirkpatrick et al. \cite{kirkpatrick1983} introduced Simulated Annealing as a general-purpose optimization technique. The method draws inspiration from statistical mechanics and has been successfully applied to TSP. Its key advantage is the ability to escape local optima by accepting worse solutions with a probability that decreases over time according to a cooling schedule.
+
+Holland \cite{holland1975} proposed the foundations of Genetic Algorithms, which were later adapted for combinatorial optimization problems including TSP. Genetic algorithms evolve a population of candidate solutions using biologically inspired operators such as selection, crossover, and mutation. Various crossover operators have been developed specifically for permutation-based problems, including Order Crossover (OX) and Partially Mapped Crossover (PMX) \cite{goldberg1989}.
+
+Recent studies have shown that hybrid approaches, which combine different heuristics, often outperform individual methods. For example, combining genetic algorithms with local search (memetic algorithms) has proven particularly effective for TSP \cite{moscato1989}.
+
+\section{Method}
+
+\subsection{Problem Formulation}
+Given a set of $n$ cities with coordinates $(x_i, y_i)$ for $i = 1, 2, \ldots, n$, the Euclidean distance between cities $i$ and $j$ is calculated as:
+
+\begin{equation}
+d_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2}
+\end{equation}
+
+The objective is to find a permutation $\pi$ of cities that minimizes the total tour distance:
+
+\begin{equation}
+\min \sum_{k=1}^{n-1} d_{\pi(k), \pi(k+1)} + d_{\pi(n), \pi(1)}
+\end{equation}
+
+\subsection{Nearest Neighbor (NN)}
+The nearest neighbor algorithm is a greedy constructive heuristic. Starting from a given city, it repeatedly visits the nearest unvisited city until all cities are visited, then returns to the starting city. To reduce the dependence on the starting city, we run the algorithm from all $n$ cities and select the best tour. The time complexity is $O(n^2)$.
+
+\subsection{Simulated Annealing (SA)}
+Simulated Annealing starts with an initial solution (obtained from NN) and iteratively perturbs it using 2-opt swap moves. A new solution is always accepted if it improves the tour distance. If the new solution is worse, it is accepted with probability $e^{-\Delta / T}$, where $\Delta$ is the cost difference and $T$ is the current temperature. The temperature is reduced according to a geometric cooling schedule $T_{k+1} = \alpha \cdot T_k$, where $\alpha$ is the cooling rate. The parameters used in our implementation are:
+
+\begin{itemize}
+    \item Initial temperature: $T_0 = 1000$
+    \item Cooling rate: $\alpha = 0.9995$
+    \item Minimum temperature: $T_{min} = 10^{-8}$
+    \item Maximum iterations: $100{,}000$
+\end{itemize}
+
+\subsection{Genetic Algorithm (GA)}
+Our genetic algorithm implementation uses the following components:
+
+\begin{itemize}
+    \item \textbf{Population:} 100 individuals, including one NN solution and 99 random permutations.
+    \item \textbf{Selection:} Tournament selection with tournament size 5.
+    \item \textbf{Crossover:} Order Crossover (OX), which preserves a segment from one parent and fills the remaining positions using the order from the other parent.
+    \item \textbf{Mutation:} Swap mutation with a rate of 0.02, where two randomly selected cities exchange positions.
+    \item \textbf{Elitism:} The top 5 individuals are preserved in each generation.
+    \item \textbf{Generations:} 500.
+\end{itemize}
+
+\subsection{2-Opt Local Search}
+The 2-opt algorithm improves an existing tour by examining all pairs of edges. For each pair, it checks whether reversing the segment between the two edges reduces the total tour distance. If an improvement is found, the reversal is applied. This process repeats until no further improvement is possible. The worst-case time complexity per pass is $O(n^2)$.
+
+\subsection{Hybrid Approaches}
+We evaluate three hybrid approaches where 2-Opt is applied as a post-processing step:
+\begin{itemize}
+    \item \textbf{NN + 2-Opt:} The NN solution is refined by 2-Opt.
+    \item \textbf{SA + 2-Opt:} The SA solution is refined by 2-Opt.
+    \item \textbf{GA + 2-Opt:} The GA solution is refined by 2-Opt.
+\end{itemize}
+
+\section{Experimental Results}
+
+\subsection{Dataset}
+Experiments were conducted on the eil51 instance from TSPLIB \cite{reinelt1991}, which consists of 51 cities with 2D Euclidean coordinates. The known optimal tour distance is 426.
+
+\subsection{Experimental Setup}
+All algorithms were implemented in Python and executed on the same machine. Since SA and GA are stochastic algorithms, each was run 10 times independently. We report the best, average, and worst tour distances, the standard deviation, and the average execution time. The optimality gap is calculated as:
+
+\begin{equation}
+\text{Gap} = \frac{\text{Average Distance} - \text{Optimal}}{\text{Optimal}} \times 100\%
+\end{equation}
+
+\subsection{Results}
+Table~\ref{tab:results} presents the performance comparison of all algorithms.
+
+\begin{table}[htbp]
+\caption{Performance Comparison on eil51}
+\label{tab:results}
+\centering
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Algorithm} & \textbf{Best} & \textbf{Avg} & \textbf{Worst} & \textbf{Std} & \textbf{Gap\%} \\
+\midrule
+NN          & 505.77 & 505.77 & 505.77 & 0.00  & 18.7\% \\
+NN + 2-Opt  & 450.04 & 450.04 & 450.04 & 0.00  & 5.6\%  \\
+SA          & 442.48 & 451.27 & 458.41 & 5.71  & 5.9\%  \\
+SA + 2-Opt  & 440.47 & 453.47 & 469.37 & 9.84  & 6.4\%  \\
+GA          & 464.06 & 476.38 & 482.37 & 5.73  & 11.8\% \\
+GA + 2-Opt  & 439.40 & 443.89 & 448.65 & 3.31  & 4.2\%  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Distance Comparison}
+Fig.~\ref{fig:distance} shows the average tour distances with error bars representing the standard deviation. The red dashed line indicates the known optimal solution of 426. GA+2-Opt achieves the lowest average distance (443.89), followed by NN+2-Opt (450.04) and SA (451.27).
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{figures/distance_comparison.pdf}}
+\caption{Average tour distance comparison across algorithms. Error bars indicate standard deviation over 10 runs.}
+\label{fig:distance}
+\end{figure}
+
+\subsection{Optimality Gap}
+Fig.~\ref{fig:gap} illustrates the percentage gap from the optimal solution. Nearest Neighbor alone has the highest gap at 18.7\%, while GA+2-Opt achieves the smallest gap at 4.2\%.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{figures/gap_comparison.pdf}}
+\caption{Optimality gap (\%) for each algorithm.}
+\label{fig:gap}
+\end{figure}
+
+\subsection{Execution Time}
+Fig.~\ref{fig:time} compares the average execution times. NN and NN+2-Opt are the fastest algorithms, completing in under 0.02 seconds. GA-based methods are significantly slower due to the population-based search.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{figures/time_comparison.pdf}}
+\caption{Average execution time (seconds) for each algorithm.}
+\label{fig:time}
+\end{figure}
+
+\subsection{Solution Quality Distribution}
+Fig.~\ref{fig:baw} presents the best, average, and worst tour distances for each algorithm. Deterministic methods (NN, NN+2-Opt) show no variance, while stochastic methods exhibit varying degrees of spread. GA+2-Opt shows the smallest spread among stochastic methods.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{figures/best_avg_worst.pdf}}
+\caption{Best, average, and worst tour distances for each algorithm.}
+\label{fig:baw}
+\end{figure}
+
+\subsection{Route Visualization}
+Fig.~\ref{fig:routes} visualizes the tours produced by each algorithm. The NN tour contains several crossing edges, which are eliminated by 2-Opt. The GA+2-Opt tour appears the most structured, with minimal crossings.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{figures/route_comparison.pdf}}
+\caption{Tour visualizations for all six algorithms on eil51.}
+\label{fig:routes}
+\end{figure}
+
+
+\section{Conclusion}
+
+In this study, we implemented and compared four heuristic algorithms and their hybrid combinations for solving the Travelling Salesman Problem on the eil51 benchmark instance. Our key findings are:
+
+\begin{enumerate}
+    \item \textbf{2-Opt is a powerful improvement method.} Applying 2-Opt as a post-processing step consistently improves solution quality. The most dramatic improvement is observed with GA, where the gap drops from 11.8\% to 4.2\%.
+    \item \textbf{GA+2-Opt achieves the best solution quality} with an average gap of only 4.2\% from the optimum and the lowest standard deviation (3.31) among stochastic methods, indicating consistent performance.
+    \item \textbf{NN+2-Opt offers the best time-quality trade-off.} It achieves a 5.6\% gap in under 0.02 seconds, making it suitable for real-time applications where speed is critical.
+    \item \textbf{Standalone GA performs relatively poorly} (11.8\% gap), suggesting that the crossover and mutation operators alone are insufficient without local refinement.
+    \item \textbf{SA provides competitive results} with a 5.9\% gap, but its performance is sensitive to the initial solution and parameter settings.
+\end{enumerate}
+
+Future work could explore larger TSPLIB instances, additional metaheuristics such as Ant Colony Optimization, adaptive parameter tuning, and more advanced local search methods like 3-opt or Lin-Kernighan.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

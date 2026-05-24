@@ -173,10 +173,8 @@ def print_table(results, optimal=426.0):
 
 
 if __name__ == "__main__":
-    print("=" * 50)
     print("TSP Heuristic Algorithm Experiments")
     print("Dataset: eil51")
-    print("=" * 50 + "\n")
 
     data_path = os.path.join(ROOT_DIR, "data", "eil51.tsp")
     csv_path = os.path.join(os.path.dirname(__file__), "eil51_results.csv")
