@@ -19,6 +19,7 @@ def create_population(pop_size, num_cities, distance):
         if cost < best_nn_cost:
             best_nn_cost = cost
             best_nn_route = route
+    #seeding the initial population with the best nn solution to speed up convergence
     population.append(best_nn_route)
 
     cities = list(range(num_cities))
@@ -45,6 +46,7 @@ def crossover(parent1, parent2):
     child = [None] * size
     child[start:end + 1] = parent1[start:end + 1]
 
+    #maintaining order crossover by filling the remaining positions from parent2
     inherited = set(child[start:end + 1])
     fill_order = [city for city in parent2 if city not in inherited]
 
@@ -101,7 +103,7 @@ def genetic_algorithm(distance, pop_size=100, generations=500,
 
 
 if __name__ == "__main__":
-    coords = tp.parse_tsp("eil51.tsp")
+    coords = tp.parse_tsp("data/eil51.tsp")
     distance = tp.distance_calc(coords)
 
     best_nn = float('inf')

@@ -37,7 +37,7 @@ def simulated_annealing(distance, initial_route,
         new_cost = total_distance(new_route, distance)
 
         delta = new_cost - current_cost
-
+        # Always accept better solutions sometimes worse ones depending on temperature
         if delta < 0 or random.random() < math.exp(-delta / temp):
             current_route = new_route
             current_cost = new_cost

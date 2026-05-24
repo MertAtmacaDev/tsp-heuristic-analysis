@@ -18,6 +18,7 @@ def two_opt(route, distance):
         improved = False
         for i in range(n - 1):
             for j in range(i + 2, n):
+                # skipping edge cases where a 2-opt swap would reverse the entire tour
                 if j == n - 1 and i == 0:
                     continue
 
@@ -30,6 +31,7 @@ def two_opt(route, distance):
                 new_cost = distance[city_a][city_c] + distance[city_b][city_d]
 
                 if new_cost < current_cost:
+                    # reversing the segment between i+1 and j in-place
                     route[i + 1:j + 1] = route[i + 1:j + 1][::-1]
                     improved = True
 

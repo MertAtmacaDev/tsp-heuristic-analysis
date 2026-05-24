@@ -24,6 +24,7 @@ def nearest_neighbor(distance, start_city):
         sorted_city.append(nearest_city)
         visited.add(nearest_city)
 
+    # closing the loop by returning back to the starting city
     total_distance += distance[sorted_city[-1]][sorted_city[0]]
     return total_distance, sorted_city
 

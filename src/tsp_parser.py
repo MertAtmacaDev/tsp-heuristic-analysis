@@ -30,7 +30,7 @@ def distance_calc(coords):
     distance = numpy.zeros((len(coords),len(coords)))
 
     for i in range(len(coords)):
-
+        # exploiting symmetry to cut distance matrix calculations in half
         for j in range(i+1, len(coords)):
             x1, y1 = coords[i]
             x2, y2 = coords[j]
