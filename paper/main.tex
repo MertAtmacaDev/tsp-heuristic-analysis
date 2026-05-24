@@ -135,16 +135,16 @@ Table~\ref{tab:results} presents the performance comparison of all algorithms.
 \midrule
 NN          & 505.77 & 505.77 & 505.77 & 0.00  & 18.7\% \\
 NN + 2-Opt  & 450.04 & 450.04 & 450.04 & 0.00  & 5.6\%  \\
-SA          & 442.48 & 451.27 & 458.41 & 5.71  & 5.9\%  \\
-SA + 2-Opt  & 440.47 & 453.47 & 469.37 & 9.84  & 6.4\%  \\
-GA          & 464.06 & 476.38 & 482.37 & 5.73  & 11.8\% \\
-GA + 2-Opt  & 439.40 & 443.89 & 448.65 & 3.31  & 4.2\%  \\
+SA          & 440.45 & 455.28 & 469.53 & 9.40  & 6.9\%  \\
+SA + 2-Opt  & 438.16 & 450.42 & 472.69 & 11.53 & 5.7\%  \\
+GA          & 462.44 & 472.43 & 485.95 & 8.20  & 10.9\% \\
+GA + 2-Opt  & 438.85 & 443.92 & 448.65 & 3.19  & 4.2\%  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Distance Comparison}
-Fig.~\ref{fig:distance} shows the average tour distances with error bars representing the standard deviation. The red dashed line indicates the known optimal solution of 426. GA+2-Opt achieves the lowest average distance (443.89), followed by NN+2-Opt (450.04) and SA (451.27).
+Fig.~\ref{fig:distance} shows the average tour distances with error bars representing the standard deviation. The red dashed line indicates the known optimal solution of 426. GA+2-Opt achieves the lowest average distance (443.92), followed by NN+2-Opt (450.04) and SA+2-Opt (450.42).
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=\columnwidth]{figures/distance_comparison.pdf}}
@@ -194,11 +194,11 @@ Fig.~\ref{fig:routes} visualizes the tours produced by each algorithm. The NN to
 In this study, we implemented and compared four heuristic algorithms and their hybrid combinations for solving the Travelling Salesman Problem on the eil51 benchmark instance. Our key findings are:
 
 \begin{enumerate}
-    \item \textbf{2-Opt is a powerful improvement method.} Applying 2-Opt as a post-processing step consistently improves solution quality. The most dramatic improvement is observed with GA, where the gap drops from 11.8\% to 4.2\%.
-    \item \textbf{GA+2-Opt achieves the best solution quality} with an average gap of only 4.2\% from the optimum and the lowest standard deviation (3.31) among stochastic methods, indicating consistent performance.
-    \item \textbf{NN+2-Opt offers the best time-quality trade-off.} It achieves a 5.6\% gap in under 0.02 seconds, making it suitable for real-time applications where speed is critical.
-    \item \textbf{Standalone GA performs relatively poorly} (11.8\% gap), suggesting that the crossover and mutation operators alone are insufficient without local refinement.
-    \item \textbf{SA provides competitive results} with a 5.9\% gap, but its performance is sensitive to the initial solution and parameter settings.
+    \item \textbf{2-Opt is a powerful improvement method.} Applying 2-Opt as a post-processing step consistently improves solution quality. The most dramatic improvement is observed with GA, where the gap drops from 10.9\% to 4.2\%.
+    \item \textbf{GA+2-Opt achieves the best solution quality} with an average gap of only 4.2\% from the optimum and the lowest standard deviation (3.19) among stochastic methods, indicating consistent performance.
+    \item \textbf{NN+2-Opt offers the best time-quality trade-off.} It achieves a 5.6\% gap in under 0.004 seconds, making it suitable for real-time applications where speed is critical.
+    \item \textbf{Standalone GA performs relatively poorly} (10.9\% gap), suggesting that the crossover and mutation operators alone are insufficient without local refinement.
+    \item \textbf{SA provides competitive results} with a 6.9\% gap, and SA+2-Opt further reduces it to 5.7\%, demonstrating that local search can enhance metaheuristic solutions.
 \end{enumerate}
 
 Future work could explore larger TSPLIB instances, additional metaheuristics such as Ant Colony Optimization, adaptive parameter tuning, and more advanced local search methods like 3-opt or Lin-Kernighan.
