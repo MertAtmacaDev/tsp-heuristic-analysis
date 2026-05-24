@@ -1,0 +1,7 @@
+algorithm,best,worst,average,std,avg_time
+Nearest Neighbor,505.77,505.77,505.77,0.0,0.0204
+NN + 2-Opt,450.04,450.04,450.04,0.0,0.004
+Simulated Annealing,440.45,469.53,455.28,9.4,0.8975
+SA + 2-Opt,438.16,472.69,450.42,11.53,0.8698
+Genetic Algorithm,462.44,485.95,472.43,8.2,9.4663
+GA + 2-Opt,438.85,448.65,443.92,3.19,9.745

@@ -28,7 +28,7 @@ def nearest_neighbor(distance, start_city):
     return total_distance, sorted_city
 
 if __name__ == "__main__":
-    coords = tp.parse_tsp("eil51.tsp")
+    coords = tp.parse_tsp("data/eil51.tsp")
     start_city = random.randint(0,50)
     total_distance, sorted_city = nearest_neighbor(tp.distance_calc(coords), start_city)
 

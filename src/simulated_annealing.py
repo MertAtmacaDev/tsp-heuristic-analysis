@@ -53,7 +53,7 @@ def simulated_annealing(distance, initial_route,
 
 
 if __name__ == "__main__":
-    coords = tp.parse_tsp("eil51.tsp")
+    coords = tp.parse_tsp("data/eil51.tsp")
     distance = tp.distance_calc(coords)
 
     start = random.randint(0, len(coords) - 1)

@@ -37,7 +37,7 @@ def two_opt(route, distance):
 
 
 if __name__ == "__main__":
-    coords = tp.parse_tsp("eil51.tsp")
+    coords = tp.parse_tsp("data/eil51.tsp")
     distance = tp.distance_calc(coords)
 
     best_nn_cost = float('inf')
